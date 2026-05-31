@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Danilo Ribeiro — Personal Wellness Plan</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js" integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi" crossorigin="anonymous"></script>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f0f2f5; color: #1a1a2e; }
+
+  .header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); color: white; padding: 24px 32px; }
+  .header h1 { font-size: 1.6rem; font-weight: 700; }
+  .header p { font-size: 0.85rem; opacity: 0.75; margin-top: 4px; }
+  .header-meta { display: flex; gap: 14px; margin-top: 14px; flex-wrap: wrap; }
+  .meta-chip { background: rgba(255,255,255,0.12); border-radius: 20px; padding: 5px 14px; font-size: 0.8rem; }
+
+  .tabs { display: flex; background: white; border-bottom: 2px solid #e8eaed; overflow-x: auto; padding: 0 16px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+  .tab { padding: 14px 18px; cursor: pointer; font-size: 0.82rem; font-weight: 600; color: #666; border-bottom: 3px solid transparent; margin-bottom: -2px; white-space: nowrap; transition: all 0.2s; }
+  .tab:hover { color: #0f3460; }
+  .tab.active { color: #0f3460; border-bottom-color: #e94560; }
+
+  .content { display: none; padding: 24px; max-width: 1100px; margin: 0 auto; }
+  .content.active { display: block; }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  @media(max-width:700px) { .grid-2,.grid-3,.grid-4 { grid-template-columns: 1fr; } }
+
+  .card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+  .card-title { font-size: 0.75rem; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; }
+
+  .stat-card { background: white; border-radius: 12px; padding: 18px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); text-align: center; }
+  .stat-value { font-size: 1.8rem; font-weight: 800; color: #0f3460; }
+  .stat-label { font-size: 0.75rem; color: #888; margin-top: 4px; }
+  .stat-sub { font-size: 0.7rem; color: #aaa; margin-top: 2px; }
+
+  .alert { border-radius: 8px; padding: 12px 16px; margin-bottom: 12px; font-size: 0.82rem; line-height: 1.5; }
+  .alert-warn { background: #fff3cd; border-left: 4px solid #ffc107; color: #7d5e00; }
+  .alert-info { background: #d1ecf1; border-left: 4px solid #17a2b8; color: #0c5460; }
+  .alert-success { background: #d4edda; border-left: 4px solid #28a745; color: #155724; }
+  .alert-danger { background: #f8d7da; border-left: 4px solid #dc3545; color: #721c24; }
+  .alert-purple { background: #e9d8fd; border-left: 4px solid #7c3aed; color: #4c1d95; }
+
+  .badge { display: inline-block; border-radius: 12px; padding: 3px 10px; font-size: 0.7rem; font-weight: 700; }
+  .badge-green { background: #d4edda; color: #155724; }
+  .badge-yellow { background: #fff3cd; color: #856404; }
+  .badge-red { background: #f8d7da; color: #721c24; }
+  .badge-blue { background: #cce5ff; color: #004085; }
+  .badge-purple { background: #e9d8fd; color: #4c1d95; }
+
+  .exam-row { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid #f0f0f0; font-size: 0.82rem; }
+  .exam-row:last-child { border-bottom: none; }
+
+  .section-title { font-size: 1.05rem; font-weight: 700; color: #1a1a2e; margin: 20px 0 12px; padding-bottom: 8px; border-bottom: 2px solid #f0f2f5; }
+
+  .muscle-table { width: 100%; border-collapse: collapse; font-size: 0.79rem; }
+  .muscle-table th { background: #0f3460; color: white; padding: 10px 12px; text-align: left; font-size: 0.74rem; }
+  .muscle-table td { padding: 9px 12px; border-bottom: 1px solid #f0f0f0; vertical-align: top; }
+  .muscle-table tr:nth-child(even) td { background: #f8f9fa; }
+  .muscle-table .sets { font-weight: 700; color: #e94560; }
+
+  .phase-banner { background: linear-gradient(90deg, #0f3460, #e94560); color: white; border-radius: 8px; padding: 12px 16px; margin: 16px 0 10px; }
+  .phase-banner h3 { font-size: 0.9rem; font-weight: 700; }
+  .phase-banner p { font-size: 0.78rem; opacity: 0.85; margin-top: 4px; }
+
+  .run-phase { border-left: 4px solid #e94560; padding-left: 16px; margin-bottom: 20px; }
+  .run-phase h3 { font-size: 0.9rem; font-weight: 700; color: #0f3460; }
+  .run-phase p { font-size: 0.8rem; color: #555; margin-top: 4px; line-height: 1.5; }
+  .run-sessions { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 10px; }
+  .run-session { background: #fff0e6; border-radius: 8px; padding: 10px; font-size: 0.78rem; line-height: 1.5; }
+  .run-session .day { font-weight: 700; color: #e94560; font-size: 0.72rem; text-transform: uppercase; margin-bottom: 4px; }
+
+  .meal { border-left: 4px solid #0f3460; background: #f8f9ff; border-radius: 0 8px 8px 0; padding: 12px 16px; margin-bottom: 10px; }
+  .meal-time { font-size: 0.72rem; font-weight: 700; color: #e94560; text-transform: uppercase; }
+  .meal-name { font-size: 0.88rem; font-weight: 700; color: #0f3460; margin: 2px 0; }
+  .meal-items { font-size: 0.79rem; color: #555; line-height: 1.6; }
+  .meal-macros { font-size: 0.72rem; color: #888; margin-top: 6px; font-weight: 600; }
+
+  .macro-bar { background: #f0f2f5; border-radius: 20px; height: 8px; margin: 6px 0 2px; overflow: hidden; }
+  .macro-fill { height: 100%; border-radius: 20px; }
+
+  /* Supplement priority cards */
+  .suppl-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+  .suppl-card { border-radius: 10px; padding: 14px; font-size: 0.8rem; border-top: 4px solid #0f3460; background: white; box-shadow: 0 1px 4px rgba(0,0,0,0.07); }
+  .suppl-card.essential { border-top-color: #dc3545; background: #fff8f8; }
+  .suppl-card.important { border-top-color: #ffc107; background: #fffdf0; }
+  .suppl-card.optional { border-top-color: #6c757d; background: #f8f9fa; }
+  .suppl-name { font-weight: 700; color: #1a1a2e; margin-bottom: 3px; }
+  .suppl-dose { font-weight: 700; font-size: 0.82rem; margin-bottom: 4px; }
+  .suppl-why { color: #555; font-size: 0.74rem; line-height: 1.4; }
+  .priority-label { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; padding: 2px 8px; border-radius: 10px; display: inline-block; margin-bottom: 6px; }
+  .pl-essential { background: #f8d7da; color: #721c24; }
+  .pl-important { background: #fff3cd; color: #856404; }
+  .pl-optional { background: #e2e3e5; color: #383d41; }
+
+  .log-form input, .log-form textarea { width: 100%; border: 1px solid #ddd; border-radius: 8px; padding: 8px 12px; font-size: 0.83rem; margin-bottom: 10px; font-family: inherit; }
+  .log-form label { font-size: 0.78rem; color: #666; font-weight: 600; display: block; margin-bottom: 4px; }
+  .btn { background: linear-gradient(135deg, #0f3460, #e94560); color: white; border: none; border-radius: 8px; padding: 10px 20px; font-size: 0.85rem; font-weight: 700; cursor: pointer; }
+  .btn:hover { opacity: 0.9; }
+
+  .log-entry { background: white; border-radius: 10px; padding: 14px; margin-bottom: 10px; border-left: 4px solid #0f3460; font-size: 0.82rem; }
+  .log-date { font-weight: 700; color: #0f3460; margin-bottom: 6px; }
+
+  .progress-bar-wrap { margin-bottom: 14px; }
+  .progress-bar-label { display: flex; justify-content: space-between; font-size: 0.78rem; margin-bottom: 4px; }
+  .progress-bar { background: #e9ecef; border-radius: 10px; height: 10px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 10px; background: linear-gradient(90deg, #0f3460, #e94560); }
+
+  .chart-wrap { position: relative; height: 220px; }
+  .note-box { background: #fffde7; border: 1px solid #ffd54f; border-radius: 8px; padding: 12px 16px; font-size: 0.8rem; color: #5d4037; margin-top: 12px; line-height: 1.5; }
+  .note-box strong { color: #e65100; }
+
+  /* Monjaro section */
+  .monjaro-card { background: linear-gradient(135deg, #f3e8ff, #ede9fe); border: 1px solid #c4b5fd; border-radius: 12px; padding: 20px; margin-bottom: 16px; }
+  .monjaro-card h3 { color: #4c1d95; font-size: 1rem; margin-bottom: 12px; }
+  .risk-row { display: flex; gap: 10px; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid #ddd5fe; font-size: 0.82rem; }
+  .risk-row:last-child { border-bottom: none; }
+  .risk-icon { font-size: 1.1rem; flex-shrink: 0; width: 24px; }
+
+  /* Day schedule */
+  .day-row { display: flex; gap: 0; margin-bottom: 6px; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.07); }
+  .day-label { background: #0f3460; color: white; padding: 10px 14px; font-weight: 700; font-size: 0.8rem; min-width: 52px; display: flex; align-items: center; justify-content: center; flex-direction: column; text-align: center; }
+  .day-content { background: white; padding: 10px 14px; flex: 1; font-size: 0.82rem; line-height: 1.5; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .day-row.run-day .day-label { background: #e94560; }
+  .day-row.rest-day .day-label { background: #6c757d; }
+  .day-block { background: #f0f2f5; border-radius: 6px; padding: 6px 10px; font-size: 0.78rem; }
+  .day-block.gym { background: #e8f0fe; color: #0f3460; }
+  .day-block.run { background: #fff0e6; color: #c0392b; }
+  .day-block.run-intense { background: #fde8e8; color: #c0392b; font-weight: 700; }
+  .day-block.rest { background: #f0f0f0; color: #888; }
+  .arrow { color: #aaa; font-size: 1rem; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🏋️ Danilo Ribeiro — Personal Wellness Plan v2</h1>
+  <p>Atualizado com: corrida pela manhã · meta 10K sub-60min · protocolo Monjaro · suplementação completa · Mai/2026</p>
+  <div class="header-meta">
+    <span class="meta-chip">📍 37 anos · 173,5cm · ~83,7kg</span>
+    <span class="meta-chip">🧬 VO₂ Máx: 41</span>
+    <span class="meta-chip">❤️ HRV: 54ms ✅ Balanced</span>
+    <span class="meta-chip">🏃 5K PR: 32:27 · 10K PR: 1:13:21</span>
+    <span class="meta-chip">🎯 Meta: 10K sub-60min em 3 meses · BF 15%</span>
+    <span class="meta-chip">💉 Monjaro: desmame planejado</span>
+  </div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="showTab('perfil',this)">📊 Perfil & Diagnóstico</div>
+  <div class="tab" onclick="showTab('horarios',this)">⏰ Horários & Combinação</div>
+  <div class="tab" onclick="showTab('musculacao',this)">💪 Musculação</div>
+  <div class="tab" onclick="showTab('corrida',this)">🏃 Corrida 10K sub-60</div>
+  <div class="tab" onclick="showTab('monjaro',this)">💉 Monjaro & Desmame</div>
+  <div class="tab" onclick="showTab('suplementos',this)">💊 Suplementos</div>
+  <div class="tab" onclick="showTab('dieta',this)">🍽️ Dieta</div>
+  <div class="tab" onclick="showTab('semanal',this)">📈 Acompanhamento</div>
+</div>
+
+<!-- ======= PERFIL ======= -->
+<div id="tab-perfil" class="content active">
+  <div class="grid-4">
+    <div class="stat-card"><div class="stat-value">84,6<small style="font-size:1rem">kg</small></div><div class="stat-label">Peso Atual</div><div class="stat-sub">↓ 12,7kg desde Dez/25</div></div>
+    <div class="stat-card"><div class="stat-value">~26<small style="font-size:1rem">%</small></div><div class="stat-label">% Gordura Estimado</div><div class="stat-sub">Meta: 15%</div></div>
+    <div class="stat-card"><div class="stat-value">41</div><div class="stat-label">VO₂ Máx</div><div class="stat-sub">Status: Produtivo</div></div>
+    <div class="stat-card"><div class="stat-value">772</div><div class="stat-label">Testosterona (ng/dL)</div><div class="stat-sub">Excelente</div></div>
+  </div>
+
+  <div class="section-title">📉 Evolução de Peso</div>
+  <div class="card"><div class="chart-wrap"><canvas id="weightChart"></canvas></div></div>
+
+  <div class="section-title">⚠️ Alertas Clínicos</div>
+  <div class="alert alert-danger"><strong>🔴 LDL: 151 mg/dL · HDL: 37 mg/dL</strong> — Ômega-3 (3g/dia) é obrigatório. Exercício aeróbico consistente é a melhor medicina para HDL baixo.</div>
+  <div class="alert alert-warn"><strong>🟡 Estradiol: 5,8 ng/dL</strong> (ref masc: 1,1–4,3). Gordura visceral converte testosterona em estrogênio. Normaliza com a perda de gordura.</div>
+  <div class="alert alert-success"><strong>✅ HRV: 54ms (Balanceado) — melhora significativa!</strong> Era 42ms desbalanceado. Noite de 31/Mai: 54ms, pico 75ms. Baseline 45-55ms. Continue priorizando sono — ontem apenas 6h34min, ideal é 7h30+.</div>
+  <div class="alert alert-warn" style="margin-top:8px"><strong>⚠️ Sono ontem: 6h34min</strong> — deep sleep 94min (ok), REM 97min (ok), mas total insuficiente. HRV cairá se isso se repetir. Meta: 22h30 na cama.</div>
+  <div class="alert alert-purple"><strong>💉 Monjaro (Tirzepatide):</strong> Desmame planejado — veja aba específica para protocolo e impactos.</div>
+  <div class="alert alert-success"><strong>✅ Excelentes:</strong> Glicose (76), HbA1c (4,7%), HOMA-IR (0,6), TSH (2,0), Testosterona (772), Vitamina D (42), Creatinina, TGO/TGP normais.</div>
+
+  <div class="section-title">🧬 Perfil Genético</div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">✅ Favoráveis</div>
+      <div class="exam-row"><span>ACTN3 (CC) — Potência e força</span><span class="badge badge-green">Força</span></div>
+      <div class="exam-row"><span>PPARA (GG) — Alta resistência muscular</span><span class="badge badge-green">Resistência</span></div>
+      <div class="exam-row"><span>ADRB2 (AA) — Boa capacidade cardiorrespiratória</span><span class="badge badge-green">Cardio</span></div>
+      <div class="exam-row"><span>NFIA-AS2 (GG) — Maior captação de O₂</span><span class="badge badge-green">VO₂</span></div>
+      <div class="exam-row"><span>SOD2 (GG) — Sem dano muscular extra pós-intenso</span><span class="badge badge-green">Recovery</span></div>
+    </div>
+    <div class="card">
+      <div class="card-title">⚠️ Atenção</div>
+      <div class="exam-row"><span>PPARD (AG) — Ganho muscular mais lento</span><span class="badge badge-yellow">+Esforço</span></div>
+      <div class="exam-row"><span>CHRM2 (GG) — FC recupera mais devagar</span><span class="badge badge-yellow">Aquecimento+</span></div>
+      <div class="exam-row"><span>FTO (A/T) — Saciedade reduzida, fome emocional</span><span class="badge badge-red">Crítico sem Monjaro</span></div>
+      <div class="exam-row"><span>WNT16 — Menor densidade óssea</span><span class="badge badge-yellow">Cálcio+D</span></div>
+      <div class="exam-row"><span>GC (AA) — Predisposição déficit Vit D</span><span class="badge badge-yellow">Suplementar</span></div>
+    </div>
+  </div>
+
+  <div class="section-title">🩸 Exames (Mar/2026)</div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Hormônios & Metabolismo</div>
+      <div class="exam-row"><span>Glicose</span><strong>76 mg/dL <span class="badge badge-green">OK</span></strong></div>
+      <div class="exam-row"><span>HbA1c / HOMA-IR</span><strong>4,7% / 0,6 <span class="badge badge-green">Ótimo</span></strong></div>
+      <div class="exam-row"><span>TSH / T4L</span><strong>2,0 / 1,5 <span class="badge badge-green">OK</span></strong></div>
+      <div class="exam-row"><span>Testosterona Total</span><strong>772 ng/dL <span class="badge badge-green">Excelente</span></strong></div>
+      <div class="exam-row"><span>Testosterona Livre</span><strong>611,1 pmol/L <span class="badge badge-green">Alta</span></strong></div>
+      <div class="exam-row"><span>Estradiol</span><strong>5,8 ng/dL <span class="badge badge-yellow">Acima ref</span></strong></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Lipídios & Outros</div>
+      <div class="exam-row"><span>LDL</span><strong>151 mg/dL <span class="badge badge-red">Limítrofe</span></strong></div>
+      <div class="exam-row"><span>HDL</span><strong>37 mg/dL <span class="badge badge-red">Baixo</span></strong></div>
+      <div class="exam-row"><span>Triglicerídeos</span><strong>89 mg/dL <span class="badge badge-green">OK</span></strong></div>
+      <div class="exam-row"><span>PCR Ultrassensível</span><strong>0,26 mg/dL <span class="badge badge-yellow">Atenção</span></strong></div>
+      <div class="exam-row"><span>Vitamina D</span><strong>42 ng/mL <span class="badge badge-green">Bom</span></strong></div>
+      <div class="exam-row"><span>Ferritina</span><strong>232 μg/L <span class="badge badge-green">OK</span></strong></div>
+    </div>
+  </div>
+</div>
+
+<!-- ======= HORÁRIOS ======= -->
+<div id="tab-horarios" class="content">
+
+  <div class="alert alert-success" style="margin-bottom:20px">
+    <strong>✅ Novo split:</strong> Academia apenas Seg / Ter / Qui. Corrida apenas Qua / Sex / Dom. Sábado = descanso. Zero sobreposição — recuperação completa entre sessões.
+  </div>
+
+  <div class="section-title">🗓️ Semana Tipo</div>
+
+  <div class="day-row">
+    <div class="day-label">SEG</div>
+    <div class="day-content">
+      <div class="day-block gym">💪 Academia — PUSH<br><small>Peito + Ombros + Tríceps · 70-80min</small></div>
+      <div style="font-size:0.78rem;color:#555;width:100%;margin-top:4px">Sessão mais pesada da semana. 100% intensidade — sem corrida anterior.</div>
+    </div>
+  </div>
+
+  <div class="day-row">
+    <div class="day-label">TER</div>
+    <div class="day-content">
+      <div class="day-block gym">💪 Academia — PULL<br><small>Costas + Bíceps · 70-80min</small></div>
+      <div style="font-size:0.78rem;color:#555;width:100%;margin-top:4px">Segunda sessão pesada. Costas bem descansadas.</div>
+    </div>
+  </div>
+
+  <div class="day-row run-day">
+    <div class="day-label">QUA<br>🏃</div>
+    <div class="day-content">
+      <div class="day-block run-intense">🏃 Corrida INTENSA (manhã)<br><small>Intervalos 400m / Tempo Run</small></div>
+      <div style="font-size:0.78rem;color:#155724;background:#d4edda;border-radius:6px;padding:5px 10px;margin-top:6px">✅ Sem academia hoje. Recuperação total após corrida intensa.</div>
+    </div>
+  </div>
+
+  <div class="day-row">
+    <div class="day-label">QUI</div>
+    <div class="day-content">
+      <div class="day-block gym">💪 Academia — LEGS + CORE<br><small>Pernas + Abdômen · 75-85min</small></div>
+      <div style="font-size:0.78rem;color:#555;width:100%;margin-top:4px">✅ Pernas com 100% de intensidade — sem corrida no dia anterior nem posterior. Melhor cenário possível para hipertrofia de MMII.</div>
+    </div>
+  </div>
+
+  <div class="day-row run-day">
+    <div class="day-label">SEX<br>🏃</div>
+    <div class="day-content">
+      <div class="day-block run">🏃 Corrida FÁCIL (manhã)<br><small>Z2 · 5-7km · FC &lt;133bpm</small></div>
+      <div style="font-size:0.78rem;color:#155724;background:#d4edda;border-radius:6px;padding:5px 10px;margin-top:6px">✅ Sem academia hoje. Recuperação pernas (treinou Qui). Corrida fácil.</div>
+    </div>
+  </div>
+
+  <div class="day-row rest-day">
+    <div class="day-label">SÁB</div>
+    <div class="day-content">
+      <div class="day-block rest">🛌 Descanso Ativo</div>
+      <div style="font-size:0.78rem;color:#888">Alongamento 20-30min, foam roller, mobilidade. Sem carga.</div>
+    </div>
+  </div>
+
+  <div class="day-row run-day">
+    <div class="day-label">DOM<br>🌅</div>
+    <div class="day-content">
+      <div class="day-block run-intense">🏃 Corrida LONGA (manhã)<br><small>9-13km · Z2 · Long run</small></div>
+      <div style="font-size:0.78rem;color:#155724;background:#d4edda;border-radius:6px;padding:5px 10px;margin-top:6px">✅ Sem academia hoje. Longo bem descansado após sábado de descanso.</div>
+    </div>
+  </div>
+
+  <div class="section-title">⚡ Regras de Combinação Corrida + Academia</div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">✅ PODE combinar (mesmo dia)</div>
+      <div style="font-size:0.82rem;line-height:1.8;">
+        <div style="padding:6px 0;border-bottom:1px solid #f0f0f0">🏃 Corrida fácil Z2 + Academia de <strong>upper body</strong> (2-3h depois)</div>
+        <div style="padding:6px 0;border-bottom:1px solid #f0f0f0">🏃 Corrida fácil Z2 + Academia de <strong>costas/bíceps</strong> (2-3h depois)</div>
+        <div style="padding:6px 0;border-bottom:1px solid #f0f0f0">🏃 Corrida fácil Z2 + <strong>ombros/core</strong> (2-3h depois)</div>
+        <div style="padding:6px 0">🏃 Corrida intensa (intervalos) + Academia de <strong>upper body</strong> (6h+ depois)</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">❌ NÃO combinar (mesmo dia)</div>
+      <div style="font-size:0.82rem;line-height:1.8;">
+        <div style="padding:6px 0;border-bottom:1px solid #f0f0f0">🏃 Corrida longa (Dom) + Academia qualquer</div>
+        <div style="padding:6px 0;border-bottom:1px solid #f0f0f0">🏃 Corrida intensa + Academia de <strong>pernas</strong> com menos de 5h de intervalo</div>
+        <div style="padding:6px 0;border-bottom:1px solid #f0f0f0">🏃 Corrida Z2 + Academia de <strong>pernas</strong> com menos de 3h</div>
+        <div style="padding:6px 0">Dois treinos de alta intensidade no mesmo dia</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="alert alert-info" style="margin-top:16px">
+    <strong>🧬 Nota Genética (CHRM2-GG):</strong> Sua recuperação cardiovascular é mais lenta geneticamente. Aquecimento obrigatório de <strong>10-15min</strong> antes de qualquer corrida intensa. Desaquecimento de <strong>10min</strong> após. Isso é especialmente importante antes de transitar da corrida para a academia.
+  </div>
+</div>
+
+<!-- ======= MUSCULAÇÃO ======= -->
+<div id="tab-musculacao" class="content">
+  <div class="alert alert-success"><strong>✅ Split 3×/semana:</strong> Seg / Ter / Qui — sem academia nos dias de corrida (Qua/Sex/Dom). Resultado: cada sessão é mais longa e intensa, recuperação completa garantida, zero interferência com a corrida.</div>
+
+  <div class="grid-3" style="margin-bottom:16px;">
+    <div style="background:white;border-radius:10px;padding:14px;box-shadow:0 1px 4px rgba(0,0,0,0.08);border-top:4px solid #e94560;text-align:center;">
+      <div style="font-weight:800;color:#0f3460;font-size:1rem">SEGUNDA</div>
+      <div style="font-size:0.8rem;color:#e94560;font-weight:700;margin:4px 0">PUSH</div>
+      <div style="font-size:0.75rem;color:#555">Peito + Ombros + Tríceps</div>
+      <div style="font-size:0.72rem;color:#888;margin-top:4px">~22 séries · 70-80min</div>
+    </div>
+    <div style="background:white;border-radius:10px;padding:14px;box-shadow:0 1px 4px rgba(0,0,0,0.08);border-top:4px solid #0f3460;text-align:center;">
+      <div style="font-weight:800;color:#0f3460;font-size:1rem">TERÇA</div>
+      <div style="font-size:0.8rem;color:#0f3460;font-weight:700;margin:4px 0">PULL</div>
+      <div style="font-size:0.75rem;color:#555">Costas + Bíceps</div>
+      <div style="font-size:0.72rem;color:#888;margin-top:4px">~21 séries · 70-80min</div>
+    </div>
+    <div style="background:white;border-radius:10px;padding:14px;box-shadow:0 1px 4px rgba(0,0,0,0.08);border-top:4px solid #28a745;text-align:center;">
+      <div style="font-weight:800;color:#0f3460;font-size:1rem">QUINTA</div>
+      <div style="font-size:0.8rem;color:#28a745;font-weight:700;margin:4px 0">LEGS + CORE</div>
+      <div style="font-size:0.75rem;color:#555">Pernas + Abdômen</div>
+      <div style="font-size:0.72rem;color:#888;margin-top:4px">~24 séries · 75-85min</div>
+    </div>
+  </div>
+
+  <div class="section-title" style="border-left:4px solid #e94560;padding-left:12px">💪 Segunda — PUSH: Peito + Ombros + Tríceps</div>
+  <div class="alert alert-info" style="margin-bottom:10px">Ombros integrados ao Push — volume mantido sem precisar de dia separado. Sessão mais pesada da semana.</div>
+  <table class="muscle-table">
+    <thead><tr><th>Exercício</th><th>Séries × Reps</th><th>Descanso</th><th>Dicas</th></tr></thead>
+    <tbody>
+      <tr><td colspan="4" style="background:#f0f4ff;font-weight:700;color:#0f3460;font-size:0.75rem;padding:6px 12px;">PEITO</td></tr>
+      <tr><td>Supino Reto (barra)</td><td class="sets">4 × 8-10</td><td>90s</td><td>Principal — registre o peso toda semana</td></tr>
+      <tr><td>Supino Inclinado (halteres)</td><td class="sets">3 × 10-12</td><td>75s</td><td>Inclinação 30-45°. Amplitude máxima</td></tr>
+      <tr><td>Peck Deck / Crucifixo Inclinado</td><td class="sets">3 × 12-15</td><td>60s</td><td>Contração máxima no topo, controle na descida</td></tr>
+      <tr><td colspan="4" style="background:#f0f4ff;font-weight:700;color:#0f3460;font-size:0.75rem;padding:6px 12px;">OMBROS</td></tr>
+      <tr><td>Desenvolvimento Militar (barra)</td><td class="sets">4 × 8-10</td><td>90s</td><td>Não arqueie a lombar. Principal de ombro</td></tr>
+      <tr><td>Elevação Lateral (halteres)</td><td class="sets">4 × 12-15</td><td>60s</td><td>Cotovelo ligeiramente flexionado</td></tr>
+      <tr><td colspan="4" style="background:#f0f4ff;font-weight:700;color:#0f3460;font-size:0.75rem;padding:6px 12px;">TRÍCEPS</td></tr>
+      <tr><td>Tríceps Pulley (corda)</td><td class="sets">4 × 10-12</td><td>60s</td><td>Cotovelos fixos. Separe a corda no final</td></tr>
+      <tr><td>Tríceps Testa (barra EZ)</td><td class="sets">3 × 10-12</td><td>60s</td><td>Amplitude completa, controle na descida</td></tr>
+      <tr><td>Mergulho em Paralelas</td><td class="sets">3 × 10-12</td><td>75s</td><td>Tronco ereto = tríceps. Use colete se ficar fácil</td></tr>
+    </tbody>
+  </table>
+
+  <div class="section-title" style="border-left:4px solid #0f3460;padding-left:12px">🏋️ Terça — PULL: Costas + Bíceps</div>
+  <table class="muscle-table">
+    <thead><tr><th>Exercício</th><th>Séries × Reps</th><th>Descanso</th><th>Dicas</th></tr></thead>
+    <tbody>
+      <tr><td colspan="4" style="background:#f0f4ff;font-weight:700;color:#0f3460;font-size:0.75rem;padding:6px 12px;">COSTAS</td></tr>
+      <tr><td>Barra Fixa (pegada pronada)</td><td class="sets">4 × 6-10</td><td>90s</td><td>Principal. Use elástico se necessário</td></tr>
+      <tr><td>Remada Curvada (barra)</td><td class="sets">4 × 8-10</td><td>90s</td><td>Tronco a 45°, barra ao umbigo</td></tr>
+      <tr><td>Remada Unilateral (halter)</td><td class="sets">3 × 10-12</td><td>60s</td><td>Cotovelo junto ao corpo, rotação do tronco</td></tr>
+      <tr><td>Puxada Frente (pegada neutra)</td><td class="sets">3 × 10-12</td><td>60s</td><td>Espessura + largura de costas</td></tr>
+      <tr><td>Face Pull (cabo)</td><td class="sets">3 × 15</td><td>45s</td><td>Nunca pule — saúde do manguito rotador</td></tr>
+      <tr><td colspan="4" style="background:#f0f4ff;font-weight:700;color:#0f3460;font-size:0.75rem;padding:6px 12px;">BÍCEPS</td></tr>
+      <tr><td>Rosca Direta (barra EZ)</td><td class="sets">4 × 10-12</td><td>60s</td><td>Supinação completa. Sem balanço do tronco</td></tr>
+      <tr><td>Rosca Martelo</td><td class="sets">3 × 10-12</td><td>60s</td><td>Braquiorradial + bíceps. Controle na descida</td></tr>
+    </tbody>
+  </table>
+
+  <div class="section-title" style="border-left:4px solid #28a745;padding-left:12px">🦵 Quinta — LEGS + CORE: Pernas + Abdômen (sessão completa, sem comprometimento por corrida)</div>
+  <div class="alert alert-success" style="margin-bottom:10px">✅ Quinta não tem corrida → pernas com 100% de intensidade. Sessão mais importante para hipertrofia de membros inferiores.</div>
+  <table class="muscle-table">
+    <thead><tr><th>Exercício</th><th>Séries × Reps</th><th>Descanso</th><th>Dicas</th></tr></thead>
+    <tbody>
+      <tr><td colspan="4" style="background:#f0f4ff;font-weight:700;color:#0f3460;font-size:0.75rem;padding:6px 12px;">QUADRÍCEPS / GLÚTEOS</td></tr>
+      <tr><td>Agachamento Livre</td><td class="sets">4 × 8-10</td><td>90s</td><td>Principal — profundidade abaixo do paralelo</td></tr>
+      <tr><td>Leg Press 45°</td><td class="sets">4 × 10-12</td><td>75s</td><td>Amplitude máxima. Não trave os joelhos</td></tr>
+      <tr><td>Avanço / Lunges (halteres)</td><td class="sets">3 × 10/lado</td><td>60s</td><td>Estabilidade e equilíbrio — ajuda na corrida</td></tr>
+      <tr><td>Cadeira Extensora</td><td class="sets">3 × 12-15</td><td>60s</td><td>Contração máxima no topo</td></tr>
+      <tr><td colspan="4" style="background:#f0f4ff;font-weight:700;color:#0f3460;font-size:0.75rem;padding:6px 12px;">ISQUIOTIBIAIS / PANTURRILHA</td></tr>
+      <tr><td>Mesa Flexora / Leg Curl</td><td class="sets">4 × 10-12</td><td>60s</td><td>Isquio — fundamental para corredores. Nunca pule</td></tr>
+      <tr><td>Stiff (barra ou halteres)</td><td class="sets">3 × 10-12</td><td>75s</td><td>Isquio + glúteo. Costas retas, descida controlada</td></tr>
+      <tr><td>Panturrilha em Pé</td><td class="sets">4 × 15-20</td><td>45s</td><td>Amplitude máxima. Previne lesão no tendão de Aquiles</td></tr>
+      <tr><td colspan="4" style="background:#f0f4ff;font-weight:700;color:#0f3460;font-size:0.75rem;padding:6px 12px;">CORE</td></tr>
+      <tr><td>Prancha Frontal</td><td class="sets">3 × 45-60s</td><td>45s</td><td>Core estável = postura de corrida melhor</td></tr>
+      <tr><td>Crunch com Peso</td><td class="sets">3 × 15-20</td><td>45s</td><td>Contração máxima no topo</td></tr>
+      <tr><td>Rotação Russa</td><td class="sets">3 × 12/lado</td><td>45s</td><td>Core rotacional — estabilidade na corrida</td></tr>
+      <tr><td>Dead Bug</td><td class="sets">3 × 8/lado</td><td>45s</td><td>Lombar nunca sai do chão</td></tr>
+    </tbody>
+  </table>
+
+  <div class="note-box"><strong>📌 Progressive Overload:</strong> Anote o peso a cada sessão. Completou TODAS as séries e reps → +2,5kg (barra) ou +1-2kg (halteres) na semana seguinte. Semana 4 de cada mês = DELOAD automático: -30% volume, mesmos exercícios. Com PPARD-AG (genética favorável à resistência muscular), progressive overload rigoroso é crítico para hipertrofia. <strong>Sem anotação de peso não há progressive overload.</strong></div>
+</div>
+
+<!-- ======= CORRIDA 10K ======= -->
+<div id="tab-corrida" class="content">
+  <div class="alert alert-warn"><strong>⚡ Objetivo agressivo:</strong> 10K abaixo de 60 minutos (pace 5:41/km) em <strong>3 meses</strong>. PR atual: 1:13:21 (73min). Reduzir 13+ minutos em 12 semanas é um desafio real — exige consistência total, sem semanas perdidas. Possível com dedicação máxima.</div>
+
+  <div class="grid-4">
+    <div class="stat-card"><div class="stat-value">1:13:21</div><div class="stat-label">10K PR (Mai/24)</div><div class="stat-sub">7:20/km pace</div></div>
+    <div class="stat-card"><div class="stat-value">1:04:44</div><div class="stat-label">Predição Garmin</div><div class="stat-sub">6:28/km · atualizado 31/Mai</div></div>
+    <div class="stat-card"><div class="stat-value">&lt;1:00:00</div><div class="stat-label">Meta</div><div class="stat-sub">5:41/km pace</div></div>
+    <div class="stat-card"><div class="stat-value">3m</div><div class="stat-label">Prazo</div><div class="stat-sub">Ago/Set 2026</div></div>
+  </div>
+
+  <div class="alert alert-danger" style="margin-top:16px"><strong>🔴 Mesma questão que antes:</strong> Seus treinos estão em Z4-Z5 (FC 158-174bpm). Para melhorar a capacidade aeróbica e conseguir sustentar 5:41/km por 10km, você precisa que <strong>80% do volume seja em Z2 (FC 114-133bpm)</strong>. Parece lento no início, mas é assim que o sistema aeróbico melhora. A velocidade vem depois.</div>
+
+  <div class="section-title">🎯 Diferença: 10K vs Meia Maratona</div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">10K Sub-60 (seu novo objetivo)</div>
+      <div style="font-size:0.82rem;line-height:1.8;">
+        <div>✅ Long run caps em <strong>12-14km</strong> (não precisa de 18-21km)</div>
+        <div>✅ Mais foco em <strong>velocidade e intervalos</strong></div>
+        <div>✅ Mais foco em <strong>tempo runs a 5:41/km</strong></div>
+        <div>✅ Volume total menor → <strong>menos impacto nas pernas</strong> para musculação</div>
+        <div>✅ Resultados possíveis em <strong>3 meses</strong> com dedicação total</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Sessões Semanais (Qua/Sex/Dom)</div>
+      <div style="font-size:0.82rem;line-height:1.8;">
+        <div>☁️ <strong>Quarta:</strong> Sessão de qualidade (intervalos ou tempo)</div>
+        <div>💨 <strong>Sexta:</strong> Corrida fácil Z2 (5-7km)</div>
+        <div>🌅 <strong>Domingo:</strong> Long run Z2 (8-12km)</div>
+        <br>
+        <div style="font-size:0.78rem;color:#888">Volume total: 18-30km/semana<br>Suficiente para 10K. Mais que isso impacta o ganho muscular.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">🫀 Suas Zonas de FC</div>
+  <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;text-align:center;font-size:0.78rem;margin-bottom:16px;">
+    <div style="background:#d4edda;padding:10px;border-radius:8px;"><strong>Z1</strong><br>&lt;114bpm<br>Recuperação</div>
+    <div style="background:#cce5ff;padding:10px;border-radius:8px;border:2px solid #007bff;"><strong>Z2 ← FOCO</strong><br>114-133bpm<br>~9:00/km</div>
+    <div style="background:#fff3cd;padding:10px;border-radius:8px;"><strong>Z3</strong><br>134-152bpm<br>Aeróbico</div>
+    <div style="background:#f8d7da;padding:10px;border-radius:8px;"><strong>Z4</strong><br>153-171bpm<br>Limiar</div>
+    <div style="background:#e2d9f3;padding:10px;border-radius:8px;"><strong>Z5</strong><br>&gt;171bpm<br>VO₂ Máx</div>
+  </div>
+
+  <div class="phase-banner"><h3>FASE 1: Base Aeróbica · Semanas 1-3 (Jun/2026)</h3><p>100% Zona 2. Fase mais curta possível — 3 semanas para calibrar o aeróbico antes de acelerar. Sem urgência, o motor precisa de base.</p></div>
+
+  <div class="run-phase">
+    <h3>Semanas 1-3 — Base Z2 (18-22km/semana)</h3>
+    <div class="run-sessions">
+      <div class="run-session"><div class="day">☁️ Quarta (manhã)</div><strong>5-6km · Z2</strong><br>FC: 114-133bpm<br>Pace: ~9:00-9:30/km<br>15min aquecimento caminhada</div>
+      <div class="run-session"><div class="day">💨 Sexta (manhã)</div><strong>4-5km · Z1-Z2</strong><br>FC: &lt;130bpm<br>Recuperação ativa<br>Pode intercalar caminhada</div>
+      <div class="run-session"><div class="day">🌅 Domingo (manhã)</div><strong>9-11km · Z2</strong><br>FC: 114-133bpm<br>Long run — base da semana<br>Hidrate a cada 30min</div>
+    </div>
+  </div>
+
+  <div class="phase-banner"><h3>FASE 2: Velocidade · Semanas 4-7 (Jun–Jul/2026)</h3><p>Intervalos na quarta para desenvolver velocidade. 75% Z2, 25% intenso. Volume: 22-27km/semana.</p></div>
+
+  <div class="run-phase">
+    <h3>Semanas 4-5 — Intervalos Curtos 400m</h3>
+    <div class="run-sessions">
+      <div class="run-session"><div class="day">☁️ Quarta — Intervalado</div>1,5km aquecimento Z2<br><strong>6×400m em Z5</strong> (pace ~5:00/km)<br>Descanso: 90s caminhada<br>1,5km volta Z1<br><small>Total: ~7km</small></div>
+      <div class="run-session"><div class="day">💨 Sexta</div><strong>5-6km fácil · Z2</strong><br>FC &lt;130bpm<br>Recuperação após intervalado</div>
+      <div class="run-session"><div class="day">🌅 Domingo</div><strong>10-12km · Z2</strong><br>Pace: ~8:30-9:00/km<br>Gel a partir de 60min</div>
+    </div>
+  </div>
+
+  <div class="run-phase">
+    <h3>Semanas 6-7 — Intervalos 800m</h3>
+    <div class="run-sessions">
+      <div class="run-session"><div class="day">☁️ Quarta — Intervalado</div>2km aquecimento Z2<br><strong>5×800m em Z4-Z5</strong> (pace ~5:20/km)<br>Descanso: 400m caminhada<br>2km volta Z1<br><small>Total: ~9km</small></div>
+      <div class="run-session"><div class="day">💨 Sexta</div><strong>6km fácil · Z2</strong><br>FC &lt;130bpm</div>
+      <div class="run-session"><div class="day">🌅 Domingo</div><strong>11-13km · Z2</strong><br>Pace: ~8:00-8:30/km</div>
+    </div>
+  </div>
+
+  <div class="phase-banner"><h3>FASE 3: Pace de Prova · Semanas 8-10 (Jul–Ago/2026)</h3><p>Tempo runs no pace-alvo de 5:41/km. Seu corpo precisa reconhecer e sustentar esse ritmo. Fase mais importante do plano.</p></div>
+
+  <div class="run-phase">
+    <h3>Semanas 8-10 — Tempo Runs ao Pace Meta</h3>
+    <div class="run-sessions">
+      <div class="run-session"><div class="day">☁️ Quarta — Tempo Run</div>2km aquecimento Z2<br><strong>4-6km a 5:41/km</strong> (Z3-Z4)<br>Desconfortável mas sustentável<br>2km volta Z1<br><small>Total: ~9-10km</small></div>
+      <div class="run-session"><div class="day">💨 Sexta</div><strong>6-7km fácil · Z2</strong><br>FC &lt;130bpm<br>Recuperação</div>
+      <div class="run-session"><div class="day">🌅 Domingo</div><strong>12-14km · Z2</strong><br>Máximo de long run para 10K<br>Constrói resistência aeróbica</div>
+    </div>
+  </div>
+
+  <div class="phase-banner" style="background:linear-gradient(90deg,#28a745,#0f3460)"><h3>FASE 4: Pico + Taper · Semanas 11-12 (Ago/2026)</h3><p>Teste de 10K no domingo da semana 11, ajustes, taper e prova na semana 12.</p></div>
+
+  <div class="run-phase">
+    <h3>Semanas 11-12 — Race Prep</h3>
+    <div class="run-sessions">
+      <div class="run-session"><div class="day">Semana 11</div><strong>🧪 10K de teste</strong><br>Dom: corrida no pace alvo<br>Avalie o tempo real sem pressão<br>Qua: 5×400m<br>Sex: 5km fácil</div>
+      <div class="run-session"><div class="day">Semana 12 — Taper</div>Qua: 4km fácil<br>Sex: 3km + 4×100m strides<br><strong>Dom: 🏆 PROVA 10K!</strong></div>
+      <div class="run-session"><div class="day">⚡ Dica Taper</div>Reduza o volume em 40%<br>Mantenha a intensidade<br>Durma 8h+<br>Hidrate bastante nos 2 dias antes</div>
+    </div>
+  </div>
+
+  <div class="section-title">📊 Volume Progressivo para 10K sub-60</div>
+  <div class="card"><div class="chart-wrap"><canvas id="runVolumeChart"></canvas></div></div>
+
+  <div class="note-box"><strong>🧬 Nota Genética:</strong> PPARA-GG (alta resistência muscular) + NFIA-AS2-GG (maior captação O₂) + ADRB2-AA (boa capacidade cardiorrespiratória) = você tem genética favorável para correr bem. CHRM2-GG = aquecimento ≥15min obrigatório antes dos intervalados. Nunca pule essa fase.</div>
+</div>
+
+<!-- ======= MONJARO ======= -->
+<div id="tab-monjaro" class="content">
+  <div class="monjaro-card">
+    <h3>💉 Monjaro (Tirzepatide) — Dose Atual: <span style="color:#e94560">7,5mg/semana</span></h3>
+    <p style="font-size:0.82rem;color:#4c1d95;line-height:1.6">Agonista duplo GIP/GLP-1. Responsável por grande parte da sua perda de peso (97,3kg → 84,6kg). Abaixo: análise baseada nos seus exames e genética sobre a viabilidade de parar, e o protocolo de desmame a partir de 7,5mg.</p>
+  </div>
+
+  <!-- VEREDITO PRINCIPAL -->
+  <div class="section-title">🔬 É viável parar o Monjaro com o seu perfil?</div>
+
+  <div class="alert alert-danger"><strong>⚠️ Resposta direta: Parar completamente é de alto risco no curto prazo.</strong> Desmame gradual até dose de manutenção (2,5mg) é o caminho mais seguro e sustentável dado o seu perfil. Veja a análise abaixo.</div>
+
+  <div class="grid-2" style="margin-bottom:16px">
+    <div class="card" style="border-top:4px solid #dc3545">
+      <div class="card-title" style="color:#dc3545">🔴 Fatores que tornam a parada arriscada</div>
+      <div class="risk-row"><div class="risk-icon">🧬</div><div><strong>Gene FTO (risco alto de obesidade)</strong> — Seu variante FTO compromete os sinais de saciedade via leptina. É exatamente isso que o Monjaro compensa farmacologicamente. Sem ele, seu cérebro "pede comida" com mais força que a média — não é fraqueza de vontade, é biologia.</div></div>
+      <div class="risk-row"><div class="risk-icon">📏</div><div><strong>Ainda longe da meta (84,6kg → ~75kg)</strong> — Parar antes de atingir o peso-alvo significa lutar contra a biologia sem o apoio do medicamento, enquanto o objetivo ainda não foi alcançado.</div></div>
+      <div class="risk-row"><div class="risk-icon">🫀</div><div><strong>LDL 151 + HDL 37</strong> — O tirzepatide também melhora o perfil lipídico. A interrupção pode reverter parte dessa melhora.</div></div>
+      <div class="risk-row"><div class="risk-icon">📊</div><div><strong>Dados de estudos SURMOUNT</strong> — ~65% do peso perdido com GLP-1/GIP retorna em 1 ano após suspensão sem mudanças robustas de estilo de vida. Com FTO, esse risco é ainda maior.</div></div>
+    </div>
+    <div class="card" style="border-top:4px solid #28a745">
+      <div class="card-title" style="color:#28a745">✅ Fatores que FAVORECEM o desmame bem-sucedido</div>
+      <div class="risk-row"><div class="risk-icon">📈</div><div><strong>HOMA-IR 0,6 + HbA1c 4,7%</strong> — Metabolismo de glicose perfeito. Não está usando Monjaro por diabetes/pré-diabetes — o risco metabólico de parar é baixo.</div></div>
+      <div class="risk-row"><div class="risk-icon">💪</div><div><strong>8 sessões de treino/semana</strong> — Exercício intenso aumenta GLP-1 endógeno, sensibilidade à insulina e supressão de apetite pós-exercício. Seu maior aliado.</div></div>
+      <div class="risk-row"><div class="risk-icon">🥩</div><div><strong>Dieta hiperproteica (185g/dia)</strong> — Proteína é o macronutriente mais saciante. Compensa parcialmente a perda de supressão de apetite do GLP-1.</div></div>
+      <div class="risk-row"><div class="risk-icon">📉</div><div><strong>Testosterone 772 ng/dL</strong> — Protege massa muscular e regula metabolismo durante o processo de desmame.</div></div>
+    </div>
+  </div>
+
+  <!-- RECOMENDAÇÃO DOSE DE MANUTENÇÃO -->
+  <div style="background:linear-gradient(135deg,#1a1a2e,#0f3460);color:white;border-radius:12px;padding:20px;margin-bottom:20px;">
+    <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;opacity:0.7;margin-bottom:8px">Recomendação baseada no seu perfil</div>
+    <div style="font-size:1.1rem;font-weight:700;margin-bottom:10px">🎯 Meta: chegar a <span style="color:#ffc107">2,5mg/semana</span> como dose de manutenção</div>
+    <div style="font-size:0.82rem;line-height:1.7;opacity:0.9">
+      A parada completa <em>pode</em> ser tentada após atingir o peso-alvo (~75-77kg) e 6+ meses em 2,5mg estável. Se o peso se mantiver estável por 3 meses em 2,5mg, então sim — a parada total passa a ser viável e segura. Mas <strong>2,5mg/semana é uma dose muito baixa, barata e com poucos efeitos colaterais</strong> — não há pressa para zerar se está funcionando como manutenção.
+    </div>
+  </div>
+
+  <!-- PROTOCOLO ESPECÍFICO DA DOSE ATUAL -->
+  <div class="section-title">📋 Protocolo de Desmame — A partir de 7,5mg</div>
+  <div class="alert alert-warn"><strong>⚠️</strong> Discuta este protocolo com sua médica. Ela define o ritmo real baseado em como você responde a cada etapa.</div>
+
+  <div style="display:grid;gap:12px;margin-bottom:20px;">
+
+    <div style="background:#fff8f8;border-radius:10px;padding:16px;border-left:5px solid #dc3545;display:grid;grid-template-columns:120px 1fr;gap:12px;align-items:start;">
+      <div style="text-align:center;">
+        <div style="font-size:1.4rem;font-weight:800;color:#dc3545">7,5mg</div>
+        <div style="font-size:0.7rem;color:#888;margin-top:2px">Dose atual</div>
+        <div style="background:#f8d7da;border-radius:6px;padding:4px 8px;font-size:0.7rem;font-weight:700;color:#721c24;margin-top:6px">AGORA</div>
+      </div>
+      <div>
+        <strong style="color:#dc3545">Etapa atual — manter até estabilizar o peso</strong>
+        <p style="font-size:0.82rem;margin-top:6px;line-height:1.6">Antes de reduzir, garanta: peso estável (±1kg) por pelo menos 4 semanas, HRV estabilizado, rotina de treino consolidada. <strong>Não reduza dose em semanas de estresse alto, mudança de rotina ou viagens.</strong></p>
+      </div>
+    </div>
+
+    <div style="background:#fffdf0;border-radius:10px;padding:16px;border-left:5px solid #ffc107;display:grid;grid-template-columns:120px 1fr;gap:12px;align-items:start;">
+      <div style="text-align:center;">
+        <div style="font-size:1.4rem;font-weight:800;color:#856404">5mg</div>
+        <div style="font-size:0.7rem;color:#888;margin-top:2px">Próxima dose</div>
+        <div style="background:#fff3cd;border-radius:6px;padding:4px 8px;font-size:0.7rem;font-weight:700;color:#856404;margin-top:6px">~Jul/2026</div>
+      </div>
+      <div>
+        <strong style="color:#856404">Etapa 1 — Reduzir de 7,5mg → 5mg</strong>
+        <p style="font-size:0.82rem;margin-top:6px;line-height:1.6">Quando: após 4 semanas de estabilidade em 7,5mg. Duração nesta dose: <strong>6-8 semanas</strong>. Monitorar: fome nas primeiras 2 semanas (normal aumentar um pouco), variação de peso (aceitável até +1,5kg de retenção hídrica transitória). Se ganhar mais de 2kg → voltar para 7,5mg.</p>
+      </div>
+    </div>
+
+    <div style="background:#f8fff9;border-radius:10px;padding:16px;border-left:5px solid #28a745;display:grid;grid-template-columns:120px 1fr;gap:12px;align-items:start;">
+      <div style="text-align:center;">
+        <div style="font-size:1.4rem;font-weight:800;color:#155724">2,5mg</div>
+        <div style="font-size:0.7rem;color:#888;margin-top:2px">Dose manutenção</div>
+        <div style="background:#d4edda;border-radius:6px;padding:4px 8px;font-size:0.7rem;font-weight:700;color:#155724;margin-top:6px">~Set/2026</div>
+      </div>
+      <div>
+        <strong style="color:#155724">Etapa 2 — Reduzir de 5mg → 2,5mg</strong>
+        <p style="font-size:0.82rem;margin-top:6px;line-height:1.6">Quando: após 6-8 semanas estável em 5mg. Esta é a dose mínima disponível do Monjaro. Duração: <strong>mínimo 3 meses</strong> antes de tentar zerar. Se o peso se mantiver estável em 2,5mg → esta é sua dose de manutenção de longo prazo. Avalie com a médica a cada 3 meses.</p>
+      </div>
+    </div>
+
+    <div style="background:#f8f9ff;border-radius:10px;padding:16px;border-left:5px solid #7c3aed;display:grid;grid-template-columns:120px 1fr;gap:12px;align-items:start;">
+      <div style="text-align:center;">
+        <div style="font-size:1.4rem;font-weight:800;color:#4c1d95">0mg?</div>
+        <div style="font-size:0.7rem;color:#888;margin-top:2px">Parada total</div>
+        <div style="background:#e9d8fd;border-radius:6px;padding:4px 8px;font-size:0.7rem;font-weight:700;color:#4c1d95;margin-top:6px">~Jan/2027+</div>
+      </div>
+      <div>
+        <strong style="color:#4c1d95">Etapa 3 — Tentativa de parada completa</strong>
+        <p style="font-size:0.82rem;margin-top:6px;line-height:1.6">Tentar somente se: peso-alvo atingido (~75-77kg), 3+ meses estável em 2,5mg, treino consolidado há 6+ meses. Monitorar peso semanalmente por 3 meses. <strong>Critério de retorno:</strong> ganho de +3kg em 6 semanas → retornar a 2,5mg como manutenção permanente. Isso não é fracasso — com FTO, manutenção farmacológica é medicina preventiva legítima.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">🔼 Reforçar em cada etapa de redução</div>
+      <div style="font-size:0.82rem;line-height:1.9;">
+        <div>✅ Proteína: garantir 185-200g/dia</div>
+        <div>✅ Aveia, feijão, frutas: fibras para saciedade</div>
+        <div>✅ Água: 3-4L/dia (reduz pseudo-fome)</div>
+        <div>✅ 5-6 refeições/dia, nunca mais de 4h sem comer</div>
+        <div>✅ Treino: nunca reduzir ao mesmo tempo que a dose</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">🚨 Sinais de que a redução foi rápida demais</div>
+      <div style="font-size:0.82rem;line-height:1.9;">
+        <div>❌ Fome intensa que não passa em 2 semanas</div>
+        <div>❌ Ganho de +2kg em 4 semanas</div>
+        <div>❌ HRV caindo consistentemente (&lt;38ms)</div>
+        <div>❌ Piora de humor, energia, sono</div>
+        <div>→ <strong>Voltar para a dose anterior por 4 semanas</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="alert alert-purple" style="margin-top:16px">
+    <strong>🧬 Gene FTO — contexto importante:</strong> Seu gene FTO compromete os sinais de saciedade via leptina — é a razão biológica pela qual o Monjaro funcionou tão bem. <strong>Tomar 2,5mg/semana como manutenção não é fraqueza.</strong> É equivalente a um hipertenso que toma anti-hipertensivo: a causa é genética, o tratamento é crônico, e isso é perfeitamente válido. A decisão de parar completamente deve ser tomada com dados reais (seu peso em 6+ meses), não por pressão.
+  </div>
+</div>
+
+<!-- ======= SUPLEMENTOS ======= -->
+<div id="tab-suplementos" class="content">
+  <div class="alert alert-info"><strong>📋 Base da recomendação:</strong> Análise genética Genera + exames laboratoriais (Mar/2026) + restrições alimentares (sem peixe, sem saladas) + objetivos (hipertrofia + corrida + desmame Monjaro).</div>
+
+  <div class="section-title">🔴 Essenciais — Alta Prioridade (tome todos estes)</div>
+  <div class="suppl-grid">
+    <div class="suppl-card essential">
+      <span class="priority-label pl-essential">Essencial</span>
+      <div class="suppl-name">🐟 Ômega-3 (EPA+DHA)</div>
+      <div class="suppl-dose" style="color:#dc3545">3g/dia com refeição</div>
+      <div class="suppl-why"><strong>Por quê:</strong> Não come peixe. LDL 151 (reduz). HDL 37 (aumenta). PCR 0,26 (anti-inflamatório). Saúde cardiovascular. Reduz inflamação pós-treino. Uma das mais importantes para você.</div>
+    </div>
+    <div class="suppl-card essential">
+      <span class="priority-label pl-essential">Essencial</span>
+      <div class="suppl-name">💪 Creatina Monohidratada</div>
+      <div class="suppl-dose" style="color:#dc3545">5g/dia — qualquer horário</div>
+      <div class="suppl-why"><strong>Por quê:</strong> PPARD-AG = ganho muscular mais lento geneticamente. Creatina é o suplemento com maior evidência para força e hipertrofia. Também melhora performance em corridas de alta intensidade.</div>
+    </div>
+    <div class="suppl-card essential">
+      <span class="priority-label pl-essential">Essencial</span>
+      <div class="suppl-name">☀️ Vitamina D3 + K2</div>
+      <div class="suppl-dose" style="color:#dc3545">3.000-4.000UI D3 + 100mcg K2 (MK-7)</div>
+      <div class="suppl-why"><strong>Por quê:</strong> GC-AA = predisposição genética a déficit de D. VKORC1 = predisposição a K baixa. WNT16 = menor densidade óssea. Não come legumes verdes (K). D atual em 42 — manter acima de 40.</div>
+    </div>
+    <div class="suppl-card essential">
+      <span class="priority-label pl-essential">Essencial</span>
+      <div class="suppl-name">🧲 Magnésio Glicinato</div>
+      <div class="suppl-dose" style="color:#dc3545">400mg · antes de dormir</div>
+      <div class="suppl-why"><strong>Por quê:</strong> HRV melhorou para 54ms (balanceado) mas sono ontem foi só 6h34min — magnésio glicinato melhora sono profundo e mantém HRV estável. +300 reações enzimáticas. Fundamental para atletas.</div>
+    </div>
+    <div class="suppl-card essential">
+      <span class="priority-label pl-essential">Essencial</span>
+      <div class="suppl-name">🥛 Whey Protein</div>
+      <div class="suppl-dose" style="color:#dc3545">40-80g/dia (1-2 doses)</div>
+      <div class="suppl-why"><strong>Por quê:</strong> Atingir 185g de proteína/dia sem excesso calórico. Pós-treino rápido. PPARD-AG exige proteína máxima. Escolha um com pelo menos 24g proteína por scoop.</div>
+    </div>
+    <div class="suppl-card essential">
+      <span class="priority-label pl-essential">Essencial no desmame</span>
+      <div class="suppl-name">🌙 Caseína</div>
+      <div class="suppl-dose" style="color:#dc3545">30g · antes de dormir</div>
+      <div class="suppl-why"><strong>Por quê:</strong> Digestão lenta (6-8h). Anti-catabolismo noturno — fundamental com PPARD-AG. Durante o desmame do Monjaro, aumenta saciedade noturna (reduz fome matinal).</div>
+    </div>
+  </div>
+
+  <div class="section-title">🟡 Importantes — Alta Recomendação</div>
+  <div class="suppl-grid">
+    <div class="suppl-card important">
+      <span class="priority-label pl-important">Importante</span>
+      <div class="suppl-name">☕ Cafeína</div>
+      <div class="suppl-dose" style="color:#856404">200mg · 30-45min pré-treino</div>
+      <div class="suppl-why"><strong>Por quê:</strong> ADORA2A genética sem ansiedade por cafeína. Melhora força (+3-5%), endurance (+2-4%), queima de gordura. Café funciona. Suplemento isolado é mais preciso.</div>
+    </div>
+    <div class="suppl-card important">
+      <span class="priority-label pl-important">Importante</span>
+      <div class="suppl-name">🍋 Vitamina C</div>
+      <div class="suppl-dose" style="color:#856404">500-1.000mg/dia</div>
+      <div class="suppl-why"><strong>Por quê:</strong> PCR borderline (antioxidante). Síntese de colágeno (saúde dos tendões — essencial para corrida). Não come legumes/frutas cítricas em quantidade.</div>
+    </div>
+    <div class="suppl-card important">
+      <span class="priority-label pl-important">Importante</span>
+      <div class="suppl-name">🦴 Cálcio</div>
+      <div class="suppl-dose" style="color:#856404">500mg · se &lt;3 laticínios/dia</div>
+      <div class="suppl-why"><strong>Por quê:</strong> WNT16 = menor densidade óssea. Priorize via alimentar (leite, iogurte, queijo). Suplementar apenas se consumo alimentar for insuficiente. Tomar separado do ferro.</div>
+    </div>
+  </div>
+
+  <div class="section-title">⚪ Opcionais — Conforme Necessidade</div>
+  <div class="suppl-grid">
+    <div class="suppl-card optional">
+      <span class="priority-label pl-optional">Opcional</span>
+      <div class="suppl-name">🌿 Vitamina B Complex</div>
+      <div class="suppl-dose" style="color:#383d41">1 cápsula/dia</div>
+      <div class="suppl-why">Energia e metabolismo. Útil durante o desmame do Monjaro para suporte metabólico geral. B12 atual está OK (526 ng/L).</div>
+    </div>
+    <div class="suppl-card optional">
+      <span class="priority-label pl-optional">Opcional</span>
+      <div class="suppl-name">⚡ Beta-Alanina</div>
+      <div class="suppl-dose" style="color:#383d41">3,2g/dia (dividido)</div>
+      <div class="suppl-why">Reduz acidez muscular em esforços de 1-4min. Útil nos intervalados de corrida e séries longas de musculação. Causa formigamento benigno (parestesia).</div>
+    </div>
+    <div class="suppl-card optional">
+      <span class="priority-label pl-optional">Opcional</span>
+      <div class="suppl-name">🍵 L-Glutamina</div>
+      <div class="suppl-dose" style="color:#383d41">5-10g/dia</div>
+      <div class="suppl-why">Durante o desmame do Monjaro: pode ajudar a reduzir fissura por açúcar e suportar a mucosa intestinal. Evidências moderadas, mas baixo risco.</div>
+    </div>
+  </div>
+
+  <div class="section-title">📋 Resumo Priorizado — O que comprar primeiro</div>
+  <div class="card">
+    <div style="overflow-x:auto;">
+    <table class="muscle-table">
+      <thead><tr><th>#</th><th>Suplemento</th><th>Dose</th><th>Timing</th><th>Prioridade</th><th>Motivo Principal</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>Ômega-3 (EPA+DHA)</td><td>3g/dia</td><td>Com refeição</td><td class="sets">🔴 Essencial</td><td>LDL alto + sem peixe</td></tr>
+        <tr><td>2</td><td>Creatina Monohidratada</td><td>5g/dia</td><td>Qualquer hora</td><td class="sets">🔴 Essencial</td><td>PPARD-AG + hipertrofia</td></tr>
+        <tr><td>3</td><td>Vitamina D3 + K2</td><td>3-4mil UI + 100mcg</td><td>Com gordura</td><td class="sets">🔴 Essencial</td><td>GC-AA + WNT16 + sem legumes</td></tr>
+        <tr><td>4</td><td>Magnésio Glicinato</td><td>400mg</td><td>Noite</td><td class="sets">🔴 Essencial</td><td>HRV baixo + sono + treino</td></tr>
+        <tr><td>5</td><td>Whey Protein</td><td>40-80g/dia</td><td>Pós-treino</td><td class="sets">🔴 Essencial</td><td>185g proteína/dia</td></tr>
+        <tr><td>6</td><td>Caseína</td><td>30g</td><td>Antes de dormir</td><td class="sets">🔴 Essencial</td><td>Anti-catabolismo + desmame</td></tr>
+        <tr><td>7</td><td>Cafeína</td><td>200mg</td><td>Pré-treino</td><td class="sets">🟡 Importante</td><td>Performance + genética ok</td></tr>
+        <tr><td>8</td><td>Vitamina C</td><td>500-1000mg</td><td>Com refeição</td><td class="sets">🟡 Importante</td><td>Colágeno + PCR + imunidade</td></tr>
+        <tr><td>9</td><td>Cálcio</td><td>500mg</td><td>Separado do almoço</td><td class="sets">🟡 Importante</td><td>WNT16 + ossos</td></tr>
+        <tr><td>10</td><td>Vitamina B Complex</td><td>1 cáps/dia</td><td>Manhã</td><td class="sets">⚪ Opcional</td><td>Energia + desmame Monjaro</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+
+  <div class="note-box"><strong>⚠️ Atenção com interações:</strong> Cálcio e Ferro: tomar com 2-3h de distância. Vitamina D melhora a absorção do Cálcio. Magnésio à noite pode potencializar o efeito da cafeína — não tome cafeína depois das 16h se tiver dificuldade de dormir. Antes de iniciar qualquer suplemento, consulte a Dra. Beatriz, especialmente durante o desmame do Monjaro.</div>
+</div>
+
+<!-- ======= DIETA ======= -->
+<div id="tab-dieta" class="content">
+  <div class="alert alert-warn"><strong>⚠️ Monjaro 7,5mg + dieta:</strong> O remédio pode causar enjoo, principalmente com refeições grandes ou gordurosas. Regra geral: <strong>porções menores, proteína primeiro, carbs depois.</strong> Se não conseguir terminar uma refeição, priorize sempre a fonte proteica — nunca pule o whey ou a carne em favor do arroz.</div>
+
+  <!-- RESUMO DÉFICIT -->
+  <div class="section-title">📊 Déficit por Tipo de Dia</div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;">
+    <div style="background:white;border-radius:12px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,0.08);border-top:4px solid #0f3460;text-align:center;">
+      <div style="font-size:0.7rem;font-weight:700;color:#888;text-transform:uppercase;margin-bottom:6px">Seg / Ter / Qui<br>💪 Só academia</div>
+      <div style="font-size:1.5rem;font-weight:800;color:#0f3460">2.100 kcal</div>
+      <div style="font-size:0.78rem;color:#28a745;font-weight:700;margin-top:4px">≈ +450 kcal déficit</div>
+      <div style="font-size:0.72rem;color:#888;margin-top:2px">Carbs: ~185g · TDEE ~2.600</div>
+    </div>
+    <div style="background:white;border-radius:12px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,0.08);border-top:4px solid #e94560;text-align:center;">
+      <div style="font-size:0.7rem;font-weight:700;color:#888;text-transform:uppercase;margin-bottom:6px">Qua / Sex / Dom<br>🏃 Só corrida</div>
+      <div style="font-size:1.5rem;font-weight:800;color:#e94560">2.300 kcal</div>
+      <div style="font-size:0.78rem;color:#28a745;font-weight:700;margin-top:4px">≈ +470 kcal déficit</div>
+      <div style="font-size:0.72rem;color:#888;margin-top:2px">Carbs: ~220g · TDEE ~2.770</div>
+    </div>
+    <div style="background:white;border-radius:12px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,0.08);border-top:4px solid #6c757d;text-align:center;">
+      <div style="font-size:0.7rem;font-weight:700;color:#888;text-transform:uppercase;margin-bottom:6px">Sábado<br>😴 Descanso</div>
+      <div style="font-size:1.5rem;font-weight:800;color:#6c757d">1.650 kcal</div>
+      <div style="font-size:0.78rem;color:#28a745;font-weight:700;margin-top:4px">≈ +580 kcal déficit</div>
+      <div style="font-size:0.72rem;color:#888;margin-top:2px">Carbs: ~110g · TDEE ~2.230</div>
+    </div>
+  </div>
+  <div style="background:#d4edda;border-radius:8px;padding:10px 16px;font-size:0.82rem;color:#155724;margin-bottom:20px;text-align:center;">
+    <strong>Déficit médio: ~490 kcal/dia → ≈ 1,9 kg de gordura/mês</strong> — melhora expressiva vs split anterior (era só ~350 kcal)
+  </div>
+
+  <!-- REGRAS MONJARO -->
+  <div class="section-title">💉 Regras de Alimentação com Monjaro 7,5mg</div>
+  <div class="grid-2" style="margin-bottom:20px;">
+    <div class="card" style="border-top:3px solid #dc3545">
+      <div class="card-title" style="color:#dc3545">🚫 O que provoca enjoo</div>
+      <div style="font-size:0.82rem;line-height:1.9;">
+        <div>❌ Refeições acima de 600 kcal de uma vez só</div>
+        <div>❌ Gordura em excesso (fritura, molhos, muito azeite)</div>
+        <div>❌ Comer rápido — mastigue devagar, sempre</div>
+        <div>❌ Deitar imediatamente após comer</div>
+        <div>❌ Álcool — piora enjoo e o próprio GLP-1 já reduz tolerância</div>
+        <div>❌ Café antes de comer qualquer coisa (irritação gástrica)</div>
+      </div>
+    </div>
+    <div class="card" style="border-top:3px solid #28a745">
+      <div class="card-title" style="color:#28a745">✅ O que ajuda</div>
+      <div style="font-size:0.82rem;line-height:1.9;">
+        <div>✅ <strong>Proteína primeiro</strong>, carbs depois em cada refeição</div>
+        <div>✅ Porções menores, mais frequentes (a cada 3-4h)</div>
+        <div>✅ Se tiver enjoo: whey com água é suficiente — não force sólidos</div>
+        <div>✅ Gengibre (chá ou cápsulas) alivia enjoo GLP-1</div>
+        <div>✅ Água gelada em pequenos goles entre refeições</div>
+        <div>✅ Se não conseguir comer: priorize whey + banana — salve a proteína</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LINHA DO TEMPO -->
+  <div class="section-title">⏱️ Horários — Treino às 7h30</div>
+  <div style="background:white;border-radius:12px;padding:16px 20px;box-shadow:0 1px 4px rgba(0,0,0,0.08);margin-bottom:20px;overflow-x:auto;">
+    <div style="display:flex;align-items:center;gap:0;min-width:620px;">
+      <div style="text-align:center;flex:1;"><div style="background:#fff3cd;border-radius:8px;padding:8px 4px;font-size:0.68rem;font-weight:700;color:#856404">6h30<br>⚡ snack<br>mínimo</div></div>
+      <div style="width:20px;height:2px;background:#ddd;flex-shrink:0"></div>
+      <div style="text-align:center;flex:1;"><div style="background:#0f3460;border-radius:8px;padding:8px 4px;font-size:0.68rem;font-weight:700;color:white">7h30<br>TREINO</div></div>
+      <div style="width:20px;height:2px;background:#ddd;flex-shrink:0"></div>
+      <div style="text-align:center;flex:1;"><div style="background:#d4edda;border-radius:8px;padding:8px 4px;font-size:0.68rem;font-weight:700;color:#155724">9h<br>🍳 Café<br>pós-treino</div></div>
+      <div style="width:20px;height:2px;background:#ddd;flex-shrink:0"></div>
+      <div style="text-align:center;flex:1;"><div style="background:#f8f9ff;border-radius:8px;padding:8px 4px;font-size:0.68rem;font-weight:700;color:#333">12h<br>🍎 Lanche</div></div>
+      <div style="width:20px;height:2px;background:#ddd;flex-shrink:0"></div>
+      <div style="text-align:center;flex:1;"><div style="background:#f8f9ff;border-radius:8px;padding:8px 4px;font-size:0.68rem;font-weight:700;color:#333">14h<br>🍽️ Almoço</div></div>
+      <div style="width:20px;height:2px;background:#ddd;flex-shrink:0"></div>
+      <div style="text-align:center;flex:1;"><div style="background:#fff0e6;border-radius:8px;padding:8px 4px;font-size:0.68rem;font-weight:700;color:#e94560">17h30<br>⚡ Pré<br>Qua/Sex</div></div>
+      <div style="width:20px;height:2px;background:#ddd;flex-shrink:0"></div>
+      <div style="text-align:center;flex:1;"><div style="background:#f8f9ff;border-radius:8px;padding:8px 4px;font-size:0.68rem;font-weight:700;color:#333">20h<br>🌙 Jantar</div></div>
+      <div style="width:20px;height:2px;background:#ddd;flex-shrink:0"></div>
+      <div style="text-align:center;flex:1;"><div style="background:#f8f9ff;border-radius:8px;padding:8px 4px;font-size:0.68rem;font-weight:700;color:#333">22h<br>🌜 Ceia</div></div>
+    </div>
+  </div>
+
+  <!-- TABS DE TIPO DE DIA -->
+  <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;">
+    <button onclick="showDiet('gym')" id="btn-gym" style="padding:8px 18px;border-radius:20px;border:2px solid #0f3460;background:#0f3460;color:white;font-weight:700;font-size:0.8rem;cursor:pointer;">💪 Seg/Ter/Qui — Gym</button>
+    <button onclick="showDiet('run')" id="btn-run" style="padding:8px 18px;border-radius:20px;border:2px solid #ddd;background:white;color:#666;font-weight:700;font-size:0.8rem;cursor:pointer;">🏃 Qua/Sex/Dom — Só Corrida</button>
+    <button onclick="showDiet('rest')" id="btn-rest" style="padding:8px 18px;border-radius:20px;border:2px solid #ddd;background:white;color:#666;font-weight:700;font-size:0.8rem;cursor:pointer;">😴 Sábado — Descanso</button>
+  </div>
+
+  <!-- DIA ACADEMIA -->
+  <div id="diet-gym">
+    <div style="background:#e8f4fd;border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:0.8rem;color:#0c5460"><strong>💪 Seg / Ter / Qui — Só musculação · Meta: 2.200 kcal · Carbs: ~200g</strong><br>Carbs reduzidos nos dias sem corrida. Proteína mantida alta para síntese muscular.</div>
+
+    <div style="background:#fff8e6;border:2px solid #ffc107;border-radius:10px;padding:14px;margin-bottom:8px;">
+      <div class="meal-time">⚡ 6h30 — Pré-Treino Mínimo</div>
+      <div class="meal-items" style="margin-top:6px">· 1 banana pequena + café preto + creatina 5g + cafeína 200mg<br><em style="color:#888;font-size:0.75rem">Se tiver enjoo do Monjaro: só café. Coma a banana depois do treino.</em></div>
+      <div class="meal-macros">~90kcal · C: 22g</div>
+    </div>
+
+    <div class="meal" style="border-left-color:#28a745">
+      <div class="meal-time">🍳 9h00 — Pós-Treino / Café da Manhã <span style="font-size:0.7rem;color:#888">(coma devagar — 20+ min)</span></div>
+      <div class="meal-name">Proteína first, depois carb</div>
+      <div class="meal-items">① Whey 30g com água (imediatamente ao chegar)<br>② 3 ovos inteiros + 1 clara (mexidos ou omelete leve — sem queijo em excesso)<br>③ 1 fatia pão integral <em style="color:#888">(era 2 — reduzido)</em><br>④ Café preto<br><em style="color:#888;font-size:0.75rem">Se enjoo: fique nos itens ① e ② e descanse. Não force o pão.</em></div>
+      <div class="meal-macros">P: ~50g · C: ~32g · G: ~14g · ~455kcal</div>
+    </div>
+
+    <div class="meal">
+      <div class="meal-time">🍎 12h00 — Lanche</div>
+      <div class="meal-name">Iogurte Proteico</div>
+      <div class="meal-items">· Iogurte grego natural 0% 200g<br>· 1 fruta pequena (maçã ou morango 100g)<br>· 2 castanhas-do-pará<br><em style="color:#888;font-size:0.75rem">Granola removida — economiza 115kcal e 22g carbs vs versão anterior</em></div>
+      <div class="meal-macros">P: ~20g · C: ~28g · G: ~5g · ~235kcal</div>
+    </div>
+
+    <div class="meal">
+      <div class="meal-time">🍽️ 14h00 — Almoço</div>
+      <div class="meal-name">Proteína + Arroz + Feijão (porção reduzida)</div>
+      <div class="meal-items">① Frango grelhado 200g OU carne magra 180g — <strong>coma primeiro</strong><br>② Feijão 1 concha (~130g)<br>③ Arroz 3 col. sopa (~120g cozido) <em style="color:#888">(era 4 — reduzido)</em><br>④ ½ col. azeite<br><em style="color:#888;font-size:0.75rem">Se enjoo: coma só o frango + feijão e pare. Já são 45g de proteína.</em></div>
+      <div class="meal-macros">P: ~58g · C: ~62g · G: ~10g · ~575kcal</div>
+    </div>
+
+    <div class="meal">
+      <div class="meal-time">🌙 20h00 — Jantar</div>
+      <div class="meal-name">Proteína + Carb Leve</div>
+      <div class="meal-items">① Carne bovina magra 180g OU frango 200g OU 4 ovos<br>② Arroz 2 col. sopa (~80g) OU batata doce 100g <em style="color:#888">(era 3 col.)</em><br>③ ½ col. azeite</div>
+      <div class="meal-macros">P: ~50g · C: ~38g · G: ~12g · ~460kcal</div>
+    </div>
+
+    <div class="meal" style="border-left-color:#888">
+      <div class="meal-time">🌜 22h00 — Ceia</div>
+      <div class="meal-name">Anti-catabolismo (obrigatória mesmo com enjoo)</div>
+      <div class="meal-items">· Caseína 30g com água OU queijo cottage 150g OU iogurte grego 150g<br>· Magnésio glicinato 400mg<br><em style="color:#888;font-size:0.75rem">Se enjoo forte: só caseína com água e o magnésio. Mínimo inegociável.</em></div>
+      <div class="meal-macros">P: ~28g · C: ~8g · G: ~4g · ~180kcal</div>
+    </div>
+
+    <div style="background:#f8f9fa;border-radius:8px;padding:10px 14px;margin-top:8px;font-size:0.78rem;color:#555;display:grid;grid-template-columns:repeat(4,1fr);gap:8px;text-align:center;">
+      <div><strong style="color:#0f3460;display:block;font-size:1.1rem">206g</strong>Proteína</div>
+      <div><strong style="color:#e94560;display:block;font-size:1.1rem">~200g</strong>Carbs</div>
+      <div><strong style="color:#ffc107;display:block;font-size:1.1rem">~45g</strong>Gordura</div>
+      <div><strong style="color:#6f42c1;display:block;font-size:1.1rem">~1.995</strong>kcal total</div>
+    </div>
+  </div>
+
+  <!-- DIA CORRIDA -->
+  <div id="diet-run" style="display:none">
+    <div style="background:#fff0e6;border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:0.8rem;color:#7d3a00"><strong>🏃 Qua / Sex / Dom — Só corrida · Meta: 2.300 kcal · Carbs: ~220g</strong><br>Sem academia = sem pré-treino da tarde. Carbs suficientes para performance na corrida, mas controlados para manter o déficit.</div>
+
+    <div style="background:#fff8e6;border:2px solid #ffc107;border-radius:10px;padding:14px;margin-bottom:8px;">
+      <div class="meal-time">⚡ 6h30 — Pré-Treino Mínimo</div>
+      <div class="meal-items" style="margin-top:6px">· Corrida Z2 (Sex/Dom): pode ser jejum — só café preto<br>· Intervalos/tempo (Qua): 1 banana + café + cafeína 200mg<br><em style="color:#888;font-size:0.75rem">Com Monjaro: se tiver náusea pela manhã, vá em jejum. Z2 em jejum é seguro e até vantajoso.</em></div>
+      <div class="meal-macros">~0-90kcal</div>
+    </div>
+
+    <div class="meal" style="border-left-color:#28a745">
+      <div class="meal-time">🍳 9h00 — Pós-Treino / Café da Manhã</div>
+      <div class="meal-name">Recuperação completa</div>
+      <div class="meal-items">① Whey 30g com água (imediatamente ao chegar)<br>② 3 ovos inteiros + 2 claras<br>③ 2 fatias pão integral OU 80g batata doce<br>④ 1 banana<br>⑤ Café preto · Creatina 5g<br><em style="color:#888;font-size:0.75rem">Se enjoo: ① + ② obrigatórios. ③ e ④ são opcionais se o estômago não permitir.</em></div>
+      <div class="meal-macros">P: ~58g · C: ~70g · G: ~16g · ~660kcal</div>
+    </div>
+
+    <div class="meal">
+      <div class="meal-time">🍎 12h00 — Lanche</div>
+      <div class="meal-name">Iogurte + Fruta + Granola</div>
+      <div class="meal-items">· Iogurte grego natural 0% 200g<br>· Granola sem açúcar 25g<br>· Frutas 100g<br>· 2 castanhas-do-pará</div>
+      <div class="meal-macros">P: ~22g · C: ~44g · G: ~7g · ~325kcal</div>
+    </div>
+
+    <div class="meal">
+      <div class="meal-time">🍽️ 14h00 — Almoço</div>
+      <div class="meal-name">Proteína + Arroz + Feijão</div>
+      <div class="meal-items">① Frango 200g OU carne magra 180g<br>② Feijão 1 concha<br>③ Arroz 3,5 col. sopa (~155g cozido)<br>④ ½ col. azeite</div>
+      <div class="meal-macros">P: ~60g · C: ~72g · G: ~12g · ~645kcal</div>
+    </div>
+
+    <div class="meal">
+      <div class="meal-time">🌙 20h00 — Jantar</div>
+      <div class="meal-name">Proteína + Carb para recuperação da corrida</div>
+      <div class="meal-items">① Carne magra 180g OU frango 200g OU 4-5 ovos<br>② Arroz 2,5 col. sopa (~100g) OU batata doce 120g<br>③ ½ col. azeite</div>
+      <div class="meal-macros">P: ~50g · C: ~46g · G: ~12g · ~490kcal</div>
+    </div>
+
+    <div class="meal" style="border-left-color:#888">
+      <div class="meal-time">🌜 22h00 — Ceia</div>
+      <div class="meal-items">· Caseína 30g OU cottage 150g · Magnésio 400mg</div>
+      <div class="meal-macros">P: ~28g · C: ~8g · G: ~4g · ~180kcal</div>
+    </div>
+
+    <div style="background:#f8f9fa;border-radius:8px;padding:10px 14px;margin-top:8px;font-size:0.78rem;color:#555;display:grid;grid-template-columns:repeat(4,1fr);gap:8px;text-align:center;">
+      <div><strong style="color:#0f3460;display:block;font-size:1.1rem">~218g</strong>Proteína</div>
+      <div><strong style="color:#e94560;display:block;font-size:1.1rem">~216g</strong>Carbs</div>
+      <div><strong style="color:#ffc107;display:block;font-size:1.1rem">~49g</strong>Gordura</div>
+      <div><strong style="color:#6f42c1;display:block;font-size:1.1rem">~2.210</strong>kcal total</div>
+    </div>
+  </div>
+
+  <!-- SÁBADO DESCANSO -->
+  <div id="diet-rest" style="display:none">
+    <div style="background:#f0f0f0;border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:0.8rem;color:#333"><strong>😴 Sábado — Descanso total · Meta: 1.700 kcal · Carbs: ~120g</strong><br>Corte mais agressivo de carbs. Proteína mantida para preservar massa. Aproveite que o Monjaro suprime o apetite neste dia.</div>
+
+    <div class="meal" style="border-left-color:#28a745">
+      <div class="meal-time">🍳 8h30-9h00 — Café da Manhã (sem pressa)</div>
+      <div class="meal-name">Proteína + Carb Mínimo</div>
+      <div class="meal-items">· 3 ovos inteiros + 2 claras (mexidos ou omelete)<br>· 1 fatia pão integral OU ½ banana<br>· Café preto · Creatina 5g</div>
+      <div class="meal-macros">P: ~42g · C: ~18g · G: ~14g · ~370kcal</div>
+    </div>
+
+    <div class="meal">
+      <div class="meal-time">🍎 12h00 — Lanche</div>
+      <div class="meal-items">· Iogurte grego 200g<br>· 1 fruta pequena<br>· 2 castanhas</div>
+      <div class="meal-macros">P: ~20g · C: ~22g · G: ~4g · ~200kcal</div>
+    </div>
+
+    <div class="meal">
+      <div class="meal-time">🍽️ 14h00 — Almoço</div>
+      <div class="meal-name">Proteína + Feijão + Arroz Reduzido</div>
+      <div class="meal-items">① Frango 200g OU carne 180g<br>② Feijão 1 concha<br>③ Arroz 2 col. sopa (~80g cozido)<br>④ ½ col. azeite</div>
+      <div class="meal-macros">P: ~58g · C: ~48g · G: ~10g · ~515kcal</div>
+    </div>
+
+    <div class="meal">
+      <div class="meal-time">🌙 19h30 — Jantar (mais cedo no descanso)</div>
+      <div class="meal-name">Proteína + Mínimo Carb</div>
+      <div class="meal-items">① 4-5 ovos OU frango 180g<br>② Batata doce 80g OU 1 fatia pão<br>③ ½ col. azeite</div>
+      <div class="meal-macros">P: ~42g · C: ~22g · G: ~12g · ~365kcal</div>
+    </div>
+
+    <div class="meal" style="border-left-color:#888">
+      <div class="meal-time">🌜 21h30 — Ceia</div>
+      <div class="meal-items">· Caseína 30g OU cottage 150g · Magnésio 400mg</div>
+      <div class="meal-macros">P: ~28g · C: ~8g · G: ~4g · ~180kcal</div>
+    </div>
+
+    <div style="background:#f8f9fa;border-radius:8px;padding:10px 14px;margin-top:8px;font-size:0.78rem;color:#555;display:grid;grid-template-columns:repeat(4,1fr);gap:8px;text-align:center;">
+      <div><strong style="color:#0f3460;display:block;font-size:1.1rem">~190g</strong>Proteína</div>
+      <div><strong style="color:#e94560;display:block;font-size:1.1rem">~118g</strong>Carbs</div>
+      <div><strong style="color:#ffc107;display:block;font-size:1.1rem">~44g</strong>Gordura</div>
+      <div><strong style="color:#6f42c1;display:block;font-size:1.1rem">~1.630</strong>kcal total</div>
+    </div>
+  </div>
+
+  <script>
+  function showDiet(type) {
+    ['gym','run','rest'].forEach(t => {
+      document.getElementById('diet-'+t).style.display = t===type ? 'block' : 'none';
+      const b = document.getElementById('btn-'+t);
+      if(b) { b.style.background = t===type ? '#0f3460' : 'white'; b.style.color = t===type ? 'white' : '#666'; b.style.borderColor = t===type ? '#0f3460' : '#ddd'; }
+    });
+  }
+  </script>
+</div>
+
+<!-- ======= ACOMPANHAMENTO ======= -->
+<div id="tab-semanal" class="content">
+  <div class="section-title">🎯 Metas — Progresso</div>
+  <div class="progress-bar-wrap"><div class="progress-bar-label"><span>⚖️ Peso (97,3kg → 75kg) — atual 83,7kg</span><span id="peso-pct">0%</span></div><div class="progress-bar"><div class="progress-fill" id="peso-bar" style="width:0%"></div></div></div>
+  <div class="progress-bar-wrap"><div class="progress-bar-label"><span>🔥 % Gordura (~26% → 15%)</span><span id="fat-pct">0%</span></div><div class="progress-bar"><div class="progress-fill" id="fat-bar" style="width:0%"></div></div></div>
+  <div class="progress-bar-wrap"><div class="progress-bar-label"><span>💨 VO₂ Max (41 → 48)</span><span id="vo2-pct">0%</span></div><div class="progress-bar"><div class="progress-fill" id="vo2-bar" style="width:0%"></div></div></div>
+  <div class="progress-bar-wrap"><div class="progress-bar-label"><span>🏃 10K Pace (7:20 → 5:41/km)</span><span id="pace-pct">0%</span></div><div class="progress-bar"><div class="progress-fill" id="pace-bar" style="width:0%"></div></div></div>
+  <div class="progress-bar-wrap"><div class="progress-bar-label"><span>❤️ HRV (42 → 52ms) — atual 54ms ✅ META ATINGIDA</span><span id="hrv-pct">0%</span></div><div class="progress-bar"><div class="progress-fill" id="hrv-bar" style="width:0%"></div></div></div>
+
+  <div class="section-title">✏️ Registrar Semana</div>
+  <div class="card">
+    <div class="log-form">
+      <div class="grid-2">
+        <div><label>📅 Início da semana</label><input type="date" id="log-date"></div>
+        <div><label>⚖️ Peso (kg)</label><input type="number" id="log-weight" placeholder="ex: 84.2" step="0.1"></div>
+        <div><label>❤️ HRV médio (ms)</label><input type="number" id="log-hrv" placeholder="ex: 44"></div>
+        <div><label>💨 VO₂ Max</label><input type="number" id="log-vo2" placeholder="ex: 41" step="0.5"></div>
+        <div><label>🏃 Total km rodados</label><input type="number" id="log-km" placeholder="ex: 22" step="0.5"></div>
+        <div><label>💪 Treinos musculação (de 5)</label><input type="number" id="log-gym" placeholder="ex: 5" min="0" max="7"></div>
+        <div><label>😴 Qualidade do Sono (1-10)</label><input type="number" id="log-sleep" placeholder="ex: 7" min="1" max="10"></div>
+        <div><label>💉 Dose Monjaro atual</label><input type="text" id="log-monjaro" placeholder="ex: 5mg, desmamando, zero"></div>
+      </div>
+      <label>📊 Garmin Training Status</label>
+      <input type="text" id="log-garmin" placeholder="ex: Produtivo, ACWR 1.0, HRV balanceado">
+      <label>📝 Observações</label>
+      <textarea id="log-notes" rows="3" placeholder="Fome após desmame? Lesões? Ajustes necessários?"></textarea>
+      <button class="btn" onclick="saveLog()">💾 Salvar Semana</button>
+    </div>
+  </div>
+
+  <div class="section-title">📋 Histórico</div>
+  <div id="log-list"><p style="color:#888;font-size:0.83rem;text-align:center;padding:20px;">Comece registrando a primeira semana.</p></div>
+
+  <div class="section-title">📅 Checkpoints</div>
+  <div class="card" style="font-size:0.82rem;line-height:1.9;">
+    <div style="display:grid;grid-template-columns:140px 1fr;gap:6px;align-items:start;">
+      <strong style="color:#0f3460">Jul/2026 (1m):</strong><span>Zona 2 estabelecida · 400m intervalos · 10K &lt;68min · Peso ~82kg</span>
+      <strong style="color:#0f3460">Ago/2026 (2m):</strong><span>800m intervalos · Tempo runs a 5:41/km · 10K &lt;64min · Peso ~80kg</span>
+      <strong style="color:#e94560">Ago-Set/2026 (3m):</strong><span>🏆 10K sub-60min · VO₂ &gt;43 · BF ~21% · HRV ≥47ms</span>
+    </div>
+  </div>
+</div>
+
+<script>
+function showTab(tab, el) {
+  document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  el.classList.add('active');
+}
+
+// Weight chart
+const wCtx = document.getElementById('weightChart').getContext('2d');
+new Chart(wCtx, {
+  type: 'line',
+  data: {
+    labels: ['Dez/25', 'Fev/26', '08/Abr', 'Mai/07', 'Mai/11', 'Mai/12', 'Mai/19', 'Mai/26', 'Mai/30', 'Meta'],
+    datasets: [{
+      label: 'Peso (kg)', data: [97.3, 97.3, 89.5, 86.1, 85.8, 85.5, 84.9, 84.6, 83.7, null],
+      borderColor: '#0f3460', backgroundColor: 'rgba(15,52,96,0.1)', fill: true, tension: 0.4, pointRadius: 5, pointBackgroundColor: '#e94560'
+    },{
+      label: 'Meta 75kg', data: [null,null,null,null,null,null,null,null,null,75],
+      borderColor: '#28a745', borderDash: [8,4], pointRadius: 8, pointStyle: 'star', pointBackgroundColor: '#28a745'
+    }]
+  },
+  options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } }, scales: { y: { min: 70, max: 100 } } }
+});
+
+// Run volume chart
+const rvCtx = document.getElementById('runVolumeChart').getContext('2d');
+new Chart(rvCtx, {
+  type: 'bar',
+  data: {
+    labels: ['S1','S2','S3','S4','S5','S6','S7','S8','S9','S10','S11','S12'],
+    datasets: [{
+      label: 'Volume semanal (km)',
+      data: [18, 20, 22, 23, 24, 25, 27, 27, 28, 28, 24, 14],
+      backgroundColor: ['#cce5ff','#cce5ff','#cce5ff','#fff3cd','#fff3cd','#f8d7da','#f8d7da','#e9d8fd','#e9d8fd','#e9d8fd','#d4edda','#d4edda'],
+      borderColor: '#0f3460', borderWidth: 1, borderRadius: 6
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { position: 'top' }, title: { display: true, text: 'Volume Semanal de Corrida — 10K sub-60 em 12 semanas (km)' } },
+    scales: { y: { title: { display: true, text: 'km/semana' }, max: 35 } }
+  }
+});
+
+// Log system
+function saveLog() {
+  const log = {
+    date: document.getElementById('log-date').value,
+    weight: parseFloat(document.getElementById('log-weight').value)||null,
+    hrv: parseInt(document.getElementById('log-hrv').value)||null,
+    sleep: parseInt(document.getElementById('log-sleep').value)||null,
+    km: parseFloat(document.getElementById('log-km').value)||null,
+    gym: parseInt(document.getElementById('log-gym').value)||null,
+    garmin: document.getElementById('log-garmin').value,
+    vo2: parseFloat(document.getElementById('log-vo2').value)||null,
+    monjaro: document.getElementById('log-monjaro').value,
+    notes: document.getElementById('log-notes').value
+  };
+  if (!log.date) { alert('Selecione a data'); return; }
+  const logs = JSON.parse(localStorage.getItem('wellness_logs_danilo2') || '[]');
+  logs.push(log);
+  localStorage.setItem('wellness_logs_danilo2', JSON.stringify(logs));
+  renderLogs(logs); updateProgress(logs);
+  ['log-date','log-weight','log-hrv','log-sleep','log-km','log-gym','log-garmin','log-vo2','log-monjaro','log-notes'].forEach(id => { document.getElementById(id).value=''; });
+  try { document.getElementById('log-date').valueAsDate = new Date(); } catch(e) {}
+}
+
+function renderLogs(logs) {
+  const list = document.getElementById('log-list');
+  if (!logs.length) { list.innerHTML='<p style="color:#888;font-size:0.83rem;text-align:center;padding:20px;">Nenhuma semana ainda.</p>'; return; }
+  list.innerHTML = [...logs].reverse().map(l => {
+    const hrvE = l.hrv>=45?'🟢':l.hrv>=38?'🟡':l.hrv?'🔴':'–';
+    const sleepE = l.sleep>=7?'🟢':l.sleep>=5?'🟡':l.sleep?'🔴':'–';
+    return `<div class="log-entry">
+      <div class="log-date">📅 Semana de ${l.date} ${l.monjaro?'· 💉 Monjaro: '+l.monjaro:''}</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;font-size:0.8rem;margin:8px 0;">
+        <div>⚖️ <strong>${l.weight?l.weight+'kg':'–'}</strong></div>
+        <div>${hrvE} HRV: <strong>${l.hrv||'–'}ms</strong></div>
+        <div>${sleepE} Sono: <strong>${l.sleep||'–'}/10</strong></div>
+        <div>💨 VO₂: <strong>${l.vo2||'–'}</strong></div>
+        <div>🏃 <strong>${l.km||'–'}km</strong></div>
+        <div>💪 <strong>${l.gym||'–'}/5</strong></div>
+        <div style="grid-column:span 2">📊 ${l.garmin||'–'}</div>
+      </div>
+      ${l.notes?`<div style="color:#555;font-size:0.78rem;border-top:1px solid #f0f0f0;padding-top:8px;margin-top:8px;font-style:italic;">"${l.notes}"</div>`:''}
+    </div>`;
+  }).join('');
+}
+
+function updateProgress(logs) {
+  const latest = logs[logs.length-1]||{};
+  const cw = latest.weight||83.7;
+  const pesoPct = Math.max(0,Math.min(100,((97.3-cw)/(97.3-75))*100));
+  document.getElementById('peso-bar').style.width=pesoPct+'%';
+  document.getElementById('peso-pct').textContent=pesoPct.toFixed(0)+'%';
+  const cvo2 = latest.vo2||41;
+  const vo2Pct = Math.max(0,Math.min(100,((cvo2-41)/(48-41))*100));
+  document.getElementById('vo2-bar').style.width=vo2Pct+'%';
+  document.getElementById('vo2-pct').textContent=vo2Pct.toFixed(0)+'%';
+  const chrv = latest.hrv||54;
+  const hrvPct = Math.max(0,Math.min(100,((chrv-42)/(52-42))*100));
+  document.getElementById('hrv-bar').style.width=hrvPct+'%';
+  document.getElementById('hrv-pct').textContent=hrvPct.toFixed(0)+'%';
+  document.getElementById('fat-bar').style.width='0%'; document.getElementById('fat-pct').textContent='0%';
+  document.getElementById('pace-bar').style.width='0%'; document.getElementById('pace-pct').textContent='0%';
+}
+
+const saved = JSON.parse(localStorage.getItem('wellness_logs_danilo2')||'[]');
+renderLogs(saved); updateProgress(saved);
+try { document.getElementById('log-date').valueAsDate=new Date(); } catch(e) {}
+</script>
+</body>
+</html>
